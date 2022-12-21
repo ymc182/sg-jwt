@@ -20,14 +20,14 @@ app.get("/", (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-	console.log(req.body.username);
-	const hash = crypto.createHash("sha256");
-	const digest = hash.update(`${req.body.username}:${req.body.password}`).digest("hex").toString();
-	const token = generateAccessToken(req.body.username, digest);
-
+	// Generate the hash and the token
+	const hash = generateHash(req.body.username, req.body.password);
+	const token = generateAccessToken(req.body.username, hash);
+	// Save the hash to the file
 	let users: User = JSON.parse(await fs.readFile(path.join(__dirname, "users", "jwt.json"), "utf-8"));
-	users[req.body.username] = digest;
+	users[req.body.username] = hash;
 	await fs.writeFile(path.join(__dirname, "users", "jwt.json"), JSON.stringify(users));
+	// Save the token to the cookie
 	res.cookie("token", token, { maxAge: 1800000, httpOnly: true });
 	res.cookie("username", req.body.username, { maxAge: 1800000, httpOnly: true });
 	res.redirect("/");
@@ -45,3 +45,8 @@ app.use(verify).get("/secret", async (req, res) => {
 app.listen(3000, () => {
 	console.log("Server started on port 3000");
 });
+
+function generateHash(username: string, password: string) {
+	const hash = crypto.createHash("sha256");
+	return hash.update(`${username}:${password}`).digest("hex").toString();
+}
