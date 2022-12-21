@@ -7,11 +7,14 @@ import fs from "fs/promises";
 import cookieParser from "cookie-parser";
 import { generateAccessToken, verify } from "./jwt.js";
 import { User } from "./types.js";
+import { expires } from "./constants.js";
 const app = express();
 app.use(express.static("public"));
-const __dirname = path.resolve();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+const __dirname = path.resolve();
+const PORT = process.env.PORT || 3001;
 
 app.get("/", (req, res) => {
 	//
@@ -28,8 +31,8 @@ app.post("/login", async (req, res) => {
 	users[req.body.username] = hash;
 	await fs.writeFile(path.join(__dirname, "users", "jwt.json"), JSON.stringify(users));
 	// Save the token to the cookie
-	res.cookie("token", token, { maxAge: 1800000, httpOnly: true });
-	res.cookie("username", req.body.username, { maxAge: 1800000, httpOnly: true });
+	res.cookie("token", token, { maxAge: expires, httpOnly: true });
+	res.cookie("username", req.body.username, { maxAge: expires, httpOnly: true });
 	res.redirect("/");
 });
 
@@ -42,8 +45,8 @@ app.use(verify).get("/secret", async (req, res) => {
 	res.sendFile(path.join(__dirname, "public", "secret.html"));
 });
 
-app.listen(3000, () => {
-	console.log("Server started on port 3000");
+app.listen(PORT, () => {
+	console.log("Server started on port " + PORT);
 });
 
 function generateHash(username: string, password: string) {

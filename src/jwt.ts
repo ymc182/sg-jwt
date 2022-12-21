@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import fs from "fs/promises";
 import path from "path";
+import { expires } from "./constants.js";
 const __dirname = path.resolve();
 export async function verify(req, res, next) {
 	const token: string = req.cookies.token;
@@ -22,5 +23,5 @@ export async function verify(req, res, next) {
 	}
 }
 export function generateAccessToken(username: string, hash: string) {
-	return jwt.sign({ username: username }, hash, { expiresIn: "1800s" });
+	return jwt.sign({ username: username }, hash, { expiresIn: expires });
 }
