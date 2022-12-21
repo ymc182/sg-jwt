@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>My App</title>
+		<link rel="stylesheet" href="styles.css" />
+	</head>
+	<body>
+		<h1>This is a server side generated website</h1>
+
+		<form action="/login" method="POST">
+			<input id="input" type="text" name="username" />
+			<input type="password" name="password" />
+			<button id="loginBtn" type="submit">Login</button>
+		</form>
+		<p id="displayName"></p>
+
+		<form action="/auth" method="POST">
+	
+			<button type="submit">Auth</button>
+	</body>
+
+	<script src="script.js"></script>
+</html>
